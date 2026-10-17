@@ -1,0 +1,3 @@
+CREATE TABLE lakekeeper.silver.supplier_clean AS SELECT * FROM lakekeeper.bronze.raw_supplier WHERE comment NOT LIKE '%Customer%Complaints%';
+CREATE TABLE lakekeeper.silver.part_filtered AS SELECT * FROM lakekeeper.bronze.raw_part WHERE brand <> 'Brand#45' AND "type" NOT LIKE 'MEDIUM POLISHED%' AND size IN (49, 14, 23, 45, 19, 3, 36, 9);
+CREATE TABLE lakekeeper.silver.partsupp_enriched AS SELECT ps.partkey, ps.suppkey, ps.availqty, ps.supplycost, p.brand, p."type", p.size FROM lakekeeper.bronze.raw_partsupp ps JOIN lakekeeper.silver.part_filtered p ON p.partkey = ps.partkey JOIN lakekeeper.silver.supplier_clean s ON s.suppkey = ps.suppkey;
